@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISTEM PENYELAMAT PERSAHABATAN 🫂</title>
+    <style>
+        :root {
+            --pink: #ff4d6d;
+            --pink-dark: #c9184a;
+            --pink-soft: #ffb3c1;
+            --dark: #2d3436;
+        }
+
+        * { box-sizing: border-box; font-family: 'Arial Rounded MT Bold', sans-serif; }
+
+        body {
+            margin: 0;
+            background-color: #fff0f3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 40px;
+            box-shadow: 15px 15px 0px var(--pink-soft);
+            border: 6px solid var(--pink);
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .page { display: none; animation: pop 0.4s ease; }
+        .active { display: block; }
+
+        @keyframes pop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        h1 { color: var(--pink); font-size: 22px; margin-bottom: 10px; }
+        p { color: var(--dark); line-height: 1.5; font-size: 16px; margin-bottom: 20px; }
+
+        /* Loading Bar */
+        .loader-container {
+            width: 100%;
+            background: #eee;
+            height: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+            border: 2px solid var(--pink-soft);
+        }
+
+        .loader-bar {
+            width: 0%;
+            height: 100%;
+            background: var(--pink);
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 3px solid var(--pink-soft);
+            border-radius: 20px;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .btn {
+            background: var(--pink);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 50px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 6px 0px var(--pink-dark);
+            margin-top: 10px;
+        }
+
+        .btn:active { transform: translateY(4px); box-shadow: 0 2px 0px var(--pink-dark); }
+
+        #btnNo {
+            background: #dfe6e9;
+            color: #636e72;
+            padding: 10px 20px;
+            width: auto;
+            margin: 10px auto;
+            box-shadow: 0 4px 0px #b2bec3;
+        }
+
+        .heart { position: absolute; pointer-events: none; animation: fall 3s linear forwards; z-index: 1000; }
+        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    <div class="card" id="mainCard">
+        <div id="p1" class="page active">
+            <h1>Haiiiii bubub</h1>
+            <p>Boleh tau gak ini siapa yang lagi buka? Masukin nama panggilan lo dong...</p>
+            <input type="text" id="nameInput" placeholder="Nama lo siapa cil?">
+            <button class="btn" onclick="startProcess()">LANJUT 🚀</button>
+        </div>
+
+        <div id="pLoad" class="page">
+            <h1 id="loadTitle">LAGI SCANNING...</h1>
+            <p id="loadText">Sabar ya <span class="vNama"></span>, lagi nyari cara paling ampuh buat bujuk lo...</p>
+            <div class="loader-container">
+                <div id="bar" class="loader-bar"></div>
+            </div>
+            <p id="percent">0%</p>
+        </div>
+
+        <div id="p2" class="page">
+            <h1>JANGAN MARAH LAGI DONG 🥺</h1>
+            <p>Maafin gue ya <span class="vNama"></span> Jangan ngambekk lagiii dongggg, nanti kae ganggu siapa klo loe ngambekk </p>
+            <button class="btn" onclick="pindah('p2', 'p3')">Gimana ya... 🤔</button>
+        </div>
+
+        <div id="p3" class="page">
+            <h1>ibo jeg ngambul gegaen ne</h1>
+            <p>do ngambull imoeett nyaaa ilaaangg nyenn loh</p>
+            <button class="btn" onclick="pindah('p3', 'p4')">nanti mirip bahlil 😰</button>
+        </div>
+
+        <div id="p4" class="page">
+            <h1 id="judulJebakan">BAIKAN SEKARANG? ❤️</h1>
+            <p id="teksJebakan">Kalo lo baikan, gue janji bakal makin asik dan gak bakal bikin kesel lagi (paling dikit doang). Deal?</p>
+            <button class="btn" id="btnYes" onclick="celebrate()">DEAL, BAIKAN! 🥰</button>
+            <button class="btn" id="btnNo" onmouseover="lari()" onclick="lari()">GAK MAU! 😠</button>
+        </div>
+
+        <div id="p5" class="page">
+            <h1>Makasiiieehh Sayangkuuw😍🫂</h1>
+            <p>Gitu dong! Gue sayang banget sama lo <span class="vNama"></span>. Nanti tak peluk lagi, idup loe ngga suram lagie. Loooveee u! 💖✨</p>
+            <button class="btn" style="background:#bdc3c7; box-shadow:0 6px 0px #95a5a6" onclick="location.reload()">Main Lagi? 😂</button>
+        </div>
+    </div>
+
+    <script>
+        var scale = 1;
+        var runCount = 0;
+
+        function pindah(hide, show) {
+            document.getElementById(hide).classList.remove('active');
+            document.getElementById(show).classList.add('active');
+        }
+
+        function startProcess() {
+            var nama = document.getElementById('nameInput').value;
+            if (nama.trim() !== "") {
+                var vNames = document.querySelectorAll('.vNama');
+                for (var i = 0; i < vNames.length; i++) {
+                    vNames[i].innerText = nama;
+                }
+                pindah('p1', 'pLoad');
+                runLoading();
+            } else {
+                alert("Isi nama dulu dong, masa gue manggil lo 'Woi' 😠");
+            }
+        }
+
+        function runLoading() {
+            var elem = document.getElementById("bar");
+            var width = 0;
+            var id = setInterval(function() {
+                if (width >= 100) {
+                    clearInterval(id);
+                    setTimeout(function() {
+                        pindah('pLoad', 'p2');
+                    }, 500);
+                } else {
+                    width++;
+                    elem.style.width = width + '%';
+                    document.getElementById("percent").innerHTML = width + '%';
+                    if(width == 40) document.getElementById("loadText").innerText = "Lagi nyusun kata-kata mutiara...";
+                    if(width == 80) document.getElementById("loadText").innerText = "Hampir luluh nih kayaknya...";
+                }
+            }, 40);
+        }
+
+        function lari() {
+            var no = document.getElementById('btnNo');
+            var yes = document.getElementById('btnYes');
+            
+            no.style.position = 'fixed';
+            no.style.left = (Math.random() * 70) + 'vw';
+            no.style.top = (Math.random() * 70) + 'vh';
+
+            scale += 0.5;
+            yes.style.transform = "scale(" + scale + ")";
+
+            runCount++;
+            var omelan = ["Duh, susah ya?", "Ayo dong baikan!", "Streak TikTok loh!", "Nanti nyesel!", "Udah capek lari?"];
+            document.getElementById('judulJebakan').innerText = omelan[runCount % omelan.length];
+
+            if(runCount > 10) {
+                no.style.display = 'none';
+                document.getElementById('judulJebakan').innerText = "MENYERAH DEH! 😂";
+            }
+        }
+
+        function celebrate() {
+            pindah('p4', 'p5');
+            setInterval(function() {
+                var h = document.createElement('div');
+                h.className = 'heart';
+                var list = ['❤️','🫂','✨','🔥','🌈','🍭','💝'];
+                h.innerHTML = list[Math.floor(Math.random() * list.length)];
+                h.style.left = (Math.random() * 100) + 'vw';
+                h.style.top = '-50px';
+                h.style.fontSize = (Math.random() * 20 + 20) + 'px';
+                document.body.appendChild(h);
+                setTimeout(function() { h.remove(); }, 3000);
+            }, 150);
+        }
+    </script>
+</body>
+</html>
